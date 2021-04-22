@@ -1,6 +1,7 @@
 package com.pranoyit.restpmtool.sevices;
 
 import com.pranoyit.restpmtool.domain.Project;
+import com.pranoyit.restpmtool.exceptions.ProjectIdException;
 import com.pranoyit.restpmtool.repositories.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,11 @@ public class ProjectServiceImpl implements ProjectService{
 
     @Override
     public Project saveOrUpdateProject(Project project) {
-        return projectRepository.save(project);
+        try {
+            project.setProjectIdentifier(project.getProjectIdentifier().toUpperCase());
+            return projectRepository.save(project);
+        } catch (Exception ex) {
+            throw new ProjectIdException("project Id '" + project.getProjectIdentifier() + "' is already used.");
+        }
     }
 }
