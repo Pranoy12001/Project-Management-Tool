@@ -34,8 +34,14 @@ public class ProjectController {
     }
 
     @GetMapping("/findProject/{projectId}")
-    public ResponseEntity<?> createNewProject(@PathVariable String projectId) {
+    public ResponseEntity<?> getProjectByProjectId(@PathVariable String projectId) {
         return new ResponseEntity<>(projectService.findByProjectIdentifier(projectId),
+                HttpStatus.OK);
+    }
+
+    @GetMapping("/findAllProject")
+    public ResponseEntity<?> createNewProject() {
+        return new ResponseEntity<>(projectService.findAllProjects(),
                 HttpStatus.OK);
     }
 }
