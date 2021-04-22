@@ -1,6 +1,7 @@
 package com.pranoyit.restpmtool.controller;
 
 import com.pranoyit.restpmtool.domain.Project;
+import com.pranoyit.restpmtool.sevices.DataValidationErrorService;
 import com.pranoyit.restpmtool.sevices.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,21 +18,19 @@ import java.util.Map;
 @RequestMapping("/api/project")
 public class ProjectController {
     ProjectService projectService;
+    DataValidationErrorService dataValidationErrorService;
 
     @Autowired
-    public ProjectController(ProjectService projectService) {
+    public ProjectController(ProjectService projectService,
+                             DataValidationErrorService dataValidationErrorService) {
         this.projectService = projectService;
+        this.dataValidationErrorService = dataValidationErrorService;
     }
 
     @PostMapping("/addProject")
     public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult result) {
         if (result.hasErrors()) {
-            Map<String, String> errorMap = new HashMap<>();
-            for (FieldError fieldError : result.getFieldErrors()) {
-                errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
-            }
-
-            return new ResponseEntity<Map>(errorMap, HttpStatus.BAD_REQUEST);
+            return dataValidationErrorService.getDataValidationErrors(result);
         }
         return new ResponseEntity<>(projectService.saveOrUpdateProject(project),
                 HttpStatus.CREATED);
