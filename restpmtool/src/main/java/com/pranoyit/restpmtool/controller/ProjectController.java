@@ -44,4 +44,20 @@ public class ProjectController {
         return new ResponseEntity<>(projectService.findAllProjects(),
                 HttpStatus.OK);
     }
+
+    @DeleteMapping("/deleteProject/{projectId}")
+    public ResponseEntity<?> createNewProject(@PathVariable String projectId) {
+        projectService.deleteProjectByProjectId(projectId);
+        return new ResponseEntity<String>("Project with projectId '" + projectId + "' was deleted",
+                HttpStatus.OK);
+    }
+
+    @PutMapping("/updateProject")
+    public ResponseEntity<?> updateProject(@Valid @RequestBody Project project, BindingResult result) {
+        if (result.hasErrors()) {
+            return dataValidationErrorService.getDataValidationErrors(result);
+        }
+        return new ResponseEntity<>(projectService.saveOrUpdateProject(project),
+                HttpStatus.OK);
+    }
 }
